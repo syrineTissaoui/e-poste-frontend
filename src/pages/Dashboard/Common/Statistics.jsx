@@ -4,10 +4,9 @@ import useRole from '../../../hooks/useRole'
 import { Navigate } from 'react-router-dom'
 import LoadingSpinner from '../../../components/Shared/LoadingSpinner'
 const Statistics = () => {
-  const [role, isLoading] = useRole()
-  if(isLoading) return <LoadingSpinner></LoadingSpinner>
-  if(role === 'customer') return <Navigate to='/dashboard/MyParcels'></Navigate>
-  if(role === 'deliveryMan') return <Navigate to='/dashboard/myDelivery'></Navigate>
+  const role = localStorage.getItem('userRole')
+  if(role === 'client') return <Navigate to='/dashboard/acceuil-client'></Navigate>
+  if(role === 'livreur') return <Navigate to='/dashboard/myDelivery'></Navigate>
   return (
     <div>
       <Helmet>

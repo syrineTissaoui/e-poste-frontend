@@ -9,7 +9,7 @@ import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
 import useAuth from '../../../hooks/useAuth';
 import { ImCross } from 'react-icons/im';
 
-const AllParcels = () => {
+const GestionCourrier = () => {
     const { user } = useAuth(); 
     const [isOpen, setIsOpen] = useState(false);
     const [selectedParcel, setSelectedParcel] = useState(null);
@@ -32,10 +32,9 @@ const AllParcels = () => {
     useEffect(() => {
         const fetchDeliveryMen = async () => {
             try {
-                const response = await axios(`${import.meta.env.VITE_API_URL}/Utilisateurs`); 
+                const response = await axios(`${import.meta.env.VITE_API_URL}/utilisateurs`); 
                 
                 const deliveryMenList = response.data.filter(user => user.role === 'livreur');
-
                 setDeliveryMen(deliveryMenList);
             } catch (error) {
                 console.error('Error fetching delivery men:', error);
@@ -56,37 +55,56 @@ const AllParcels = () => {
 
     const handleAssignDeliveryMan = async () => {
         if (!deliveryManID || !approximateDeliveryDate) return;
-      
+    
+        
         const selectedDeliveryMan = deliveryMen.find(deliveryMan => deliveryMan._id === deliveryManID);
-      
+    
         if (!selectedDeliveryMan) {
-          setError('Delivery man not found.');
-          return;
+            setError('Delivery man not found.');
+            return;
         }
-      
-        setIsSubmitting(true);
-        setError(null);
-      
+    
+       
+        const payload = {
+            parcelID: selectedParcel._id,
+            id_colis: selectedParcel.id_colis,
+            parcelType: selectedParcel.contenu,
+            senderName: selectedParcel.expediteur,
+            senderEmail: selectedParcel.senderEmail,
+            senderPhone: selectedParcel.phone,
+            receiverName: selectedParcel.destinataire,
+            deliveryAddress: selectedParcel.adresseDestinataire,
+            status: selectedParcel.status,
+            weight: selectedParcel.poids,
+            cost: selectedParcel.prix,
+            requestedDeliveryDate: selectedParcel.dateEnvoi,
+        };
+    
+       
+        console.log("Sending request with payload:", payload);
+    
         try {
-          const response = await axios.put(
-            `${import.meta.env.VITE_API_URL}/colis/affecter/${selectedParcel._id}`,
-            {
-              livreur: deliveryManID,
-              dateLivraison: approximateDeliveryDate,
-              statut: "En Transit", // use 'statut' if that's the schema field
-            }
-          );
-      
-          console.log("✅ Server Response:", response.data);
-          refetch();        // Refresh the list
-          closeModal();     // Close modal
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/assign-parcel`, payload);
+    
+           
+            console.log("Response from server:", response);
+    
+            await axios.patch(`${import.meta.env.VITE_API_URL}/parcels/${selectedParcel._id}`, {
+                deliveryManID,
+                deliveryManEmail: selectedDeliveryMan.email,
+                approximateDeliveryDate,
+                status: "on the way",
+            });
+    
+            refetch();
+            closeModal();
         } catch (error) {
-          setError('Erreur lors de l’assignation du livreur.');
-          console.error('Erreur:', error.response?.data || error.message);
+            setError('Error assigning DeliveryMan. Please try again.');
+            console.error('Error assigning DeliveryMan', error.response ? error.response.data : error);
         } finally {
-          setIsSubmitting(false);
+            setIsSubmitting(false);
         }
-      };
+    };
     
 
 
@@ -132,15 +150,18 @@ const AllParcels = () => {
                                         
                                         <td className="px-4 py-2 border-b">{statut}</td>
                                         <td className="px-4 py-2 border-b">
-                                        <Button
-  disabled={['Livré', 'En transit' , 'Annulé'].includes(statut) }
-  onClick={() => openModal(parcel)}
-  label={
-    ['Livré', 'En transit' , 'Annulé'].includes(statut)
-      ? statut.charAt(0).toUpperCase() + statut.slice(1)
-      : 'ajouter Livreur'
-  }
-/>
+                                            <Button
+                                                disabled={statut === 'En attente' || statut === 'Livré' || statut === 'En Transit' || !user}
+                                                onClick={() => openModal(parcel)}
+                                                label={
+                                                    statut === 'En attente' || statut === 'Livré' || statut === 'En Transit'
+                                                        ? `${statut.charAt(0).toUpperCase() + statut.slice(1)}`
+                                                        : 'Manage Parcel'
+                                                }
+                                            />
+
+
+
                                         </td>
                                     </tr>
                                 );
@@ -169,7 +190,7 @@ const AllParcels = () => {
                                     <option value="">-- Select Delivery Man --</option>
                                     {deliveryMen.map((deliveryMan) => (
                                         <option key={deliveryMan._id} value={deliveryMan._id}>
-                                            {deliveryMan.nom}
+                                            {deliveryMan.name}
                                         </option>
                                     ))}
                                 </select>
@@ -197,4 +218,4 @@ const AllParcels = () => {
     );
 };
 
-export default AllParcels;
+export default GestionCourrier;

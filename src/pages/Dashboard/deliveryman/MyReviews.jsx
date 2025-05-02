@@ -18,7 +18,7 @@ const MyReviews = () => {
         staleTime: 0,
     });
 
-    if (!user?.email) {
+    if (!userEmail) {
         return (
             <div className="min-h-screen flex items-center justify-center">
                 <p className="text-lg font-semibold text-gray-700">Please log in to see your reviews.</p>

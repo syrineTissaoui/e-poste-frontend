@@ -1,152 +1,120 @@
-import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
-import { FcGoogle } from 'react-icons/fc'
-import useAuth from '../../hooks/useAuth'
-import toast from 'react-hot-toast'
-import { GiSpinningSword } from "react-icons/gi";
-import LoadingSpinner from '../../components/Shared/LoadingSpinner'
-import { saveUser } from '../../api/utils'
-import backgroundImage from '../../assets/images/3.png';
+import { useState } from 'react';
+import { useNavigate, useLocation, Link, Navigate } from 'react-router-dom';
+import { FcGoogle } from 'react-icons/fc';
+import { FaFacebookF, FaApple } from 'react-icons/fa';
+import toast from 'react-hot-toast';
+import axios from 'axios';
+import logo from '../../assets/images/connexion.png'
+import { GiSpinningSword } from 'react-icons/gi';
 
 const Login = () => {
-  const { signIn, signInWithGoogle, loading, user } = useAuth()
-  const navigate = useNavigate()
-  const location = useLocation()
-  const from = location?.state?.from?.pathname || '/'
-  if (loading) return <LoadingSpinner />
-  if (user) return <Navigate to={from} replace={true} />
+  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location?.state?.from?.pathname || '/';
 
-  // form submit handler
-  const handleSubmit = async event => {
-    event.preventDefault()
-    const form = event.target
-    const email = form.email.value
-    const password = form.password.value
+  if (loading) return <div className="text-center mt-40">Chargement...</div>;
+  if (user) return <Navigate to={from} replace={true} />;
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const email = e.target.email.value;
+    const password = e.target.password.value;
 
     try {
-      //User Login
-      await signIn(email, password)
+      setLoading(true);
+      const res = await axios.post('http://localhost:5000/api/auth/login', {
+        email,
+        password
+      });
 
-      navigate(from, { replace: true })
-      toast.success('Login Successful')
-    } catch (err) {
-      console.log(err)
-      toast.error(err?.message)
-    }
-  }
+      const { token, utilisateur } = res.data;
 
-  // Handle Google Signin
-  const handleGoogleSignIn = async () => {
-    try {
-      //User Registration using google
-      const data = await signInWithGoogle()
-      await saveUser(data?.user)
-      navigate('/')
-      toast.success('Signup Successful')
+      localStorage.setItem('token', token);
+      localStorage.setItem('userId', utilisateur.id);
+      localStorage.setItem('userName', utilisateur.nom);
+      localStorage.setItem('userEmail', utilisateur.email);
+      localStorage.setItem('userRole', utilisateur.role);
+
+      setUser(utilisateur);
+      toast.success('Connexion réussie');
     } catch (err) {
-      console.log(err)
-      toast.error(err?.message)
+      toast.error(err?.response?.data?.message || 'Échec de connexion');
+    } finally {
+      setLoading(false);
     }
-  }
+  };
+
   return (
-    <div
-      className="flex justify-center items-center min-h-screen bg-cover bg-center"
-      style={{
-        backgroundImage: `url(${backgroundImage})`,
-      }}
-    >
-      <div className="flex flex-col max-w-md p-6 rounded-md sm:p-10 bg-gray-100 bg-opacity-90 text-gray-900">
-        <div className="mb-8 text-center">
-          <h1 className="my-3 text-4xl font-bold">Log In</h1>
-          <p className="text-sm text-gray-400">
-            Sign in to access your account
-          </p>
+    <div className="flex min-h-screen items-center justify-center bg-white">
+      <div className="flex w-full max-w-6xl ">
+        
+        <div className="w-1/2 bg-white p-10 text-left">
+          <h2 className="text-3xl font-bold text-blue-900 mb-2">Se connecter à</h2>
+          <h3 className="text-2xl font-semibold text-blue-600">E-Poste</h3>
+          <img
+            src={logo} // Replace with your illustration path
+            alt="login illustration"
+            className="mt-12"
+          />
         </div>
-        <form
-          onSubmit={handleSubmit}
-          noValidate=""
-          action=""
-          className="space-y-6 ng-untouched ng-pristine ng-valid"
-        >
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="email" className="block mb-2 text-sm">
-                Email address
-              </label>
-              <input
-                type="email"
-                name="email"
-                id="email"
-                required
-                placeholder="Enter Your Email Here"
-                className="w-full px-3 py-2 border rounded-md border-gray-300 focus:outline-lime-500 bg-gray-200 text-gray-900"
-                data-temp-mail-org="0"
-              />
+
+        {/* Right: Form */}
+        <div className="w-1/2  p-10 flex flex-col justify-center">
+          <h3 className="text-yellow-500 text-xl mb-6 font-semibold text-center">Accéder à votre compte</h3>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <input
+              type="email"
+              name="email"
+              placeholder="Entrez votre e-mail"
+              required
+              className="w-full px-4 py-3 rounded-md bg-white border border-gray-300"
+            />
+            <input
+              type="password"
+              name="password"
+              placeholder="Mot de passe"
+              required
+              className="w-full px-4 py-3 rounded-md bg-white border border-gray-300"
+            />
+            <div className="text-right text-sm text-gray-600 hover:underline cursor-pointer">
+              Mot de passe oublié ?
             </div>
-            <div>
-              <div className="flex justify-between">
-                <label htmlFor="password" className="text-sm mb-2">
-                  Password
-                </label>
-              </div>
-              <input
-                type="password"
-                name="password"
-                autoComplete="current-password"
-                id="password"
-                required
-                placeholder="*******"
-                className="w-full px-3 py-2 border rounded-md border-gray-300 focus:outline-lime-500 bg-gray-200 text-gray-900"
-              />
+            <div className="flex space-x-4">
+              <button
+                type="submit"
+                className="bg-yellow-400 hover:bg-yellow-500 text-white w-full py-2 rounded-md font-semibold"
+              >
+                {loading ? <GiSpinningSword className="animate-spin m-auto" /> : 'Se connecter'}
+              </button>
+              <button
+                type="reset"
+                className="bg-yellow-400 hover:bg-yellow-500 text-white w-full py-2 rounded-md font-semibold"
+              >
+                Annuler
+              </button>
             </div>
+          </form>
+           <p className="px-6 text-sm text-center text-gray-400">
+                    ACréer un compte?{' '}
+                    <Link to="/signup" className="hover:underline hover:text-lime-500 text-gray-600">
+                    signup
+                    </Link>
+                    .
+                  </p>
+
+          <div className="text-center mt-6 text-sm text-gray-500">ou continuer avec</div>
+          <div className="flex justify-center space-x-4 mt-2">
+            <button className="text-blue-600"><FaFacebookF size={24} /></button>
+            <button><FaApple size={24} /></button>
+            <button><FcGoogle size={24} /></button>
           </div>
 
-          <div>
-            <button
-              type="submit"
-              className="bg-lime-500 w-full rounded-md py-3 text-white"
-            >
-              {loading ? (
-                <GiSpinningSword className="animate-spin m-auto" />
-              ) : (
-                "Continue"
-              )}
-            </button>
-          </div>
-        </form>
-        <div className="space-y-1">
-          <button className="text-xs hover:underline hover:text-lime-500 text-gray-400">
-            Forgot password?
-          </button>
         </div>
-        <div className="flex items-center pt-4 space-x-1">
-          <div className="flex-1 h-px sm:w-16 dark:bg-gray-700"></div>
-          <p className="px-3 text-sm dark:text-gray-400">
-            Login with social accounts
-          </p>
-          <div className="flex-1 h-px sm:w-16 dark:bg-gray-700"></div>
-        </div>
-        <div
-          onClick={handleGoogleSignIn}
-          className="flex justify-center items-center space-x-2 border m-3 p-2 border-gray-300 border-rounded cursor-pointer"
-        >
-          <FcGoogle size={32} />
-
-          <p>Continue with Google</p>
-        </div>
-        <p className="px-6 text-sm text-center text-gray-400">
-          Don&apos;t have an account yet?{" "}
-          <Link
-            to="/signup"
-            className="hover:underline hover:text-lime-500 text-gray-600"
-          >
-            Sign up
-          </Link>
-          .
-        </p>
       </div>
     </div>
+  );
+};
 
-  )
-}
-
-export default Login
+export default Login;

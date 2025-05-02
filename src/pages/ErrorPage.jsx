@@ -15,9 +15,9 @@ const ErrorPage = () => {
           
            
           <h1 className='mt-3 text-2xl font-semibold text-red-600  md:text-3xl'>
-            Something Went Wrong!
+          Quelque chose s'est mal passé !
           </h1>
-          <p className='mt-4 text-red-500 '>Here are some helpful links:</p>
+          <p className='mt-4 text-red-500 '> Voici quelques liens utiles :</p>
 
           <div className='flex items-center w-full mt-6 gap-x-3 shrink-0 sm:w-auto'>
             <button
@@ -38,11 +38,12 @@ const ErrorPage = () => {
                   d='M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18'
                 />
               </svg>
-
-              <span>Go back</span>
+             
+             
+              <span>Retourner a la page d'acceuil</span>
             </button>
 
-            <Button label={'Take Me Home'} onClick={() => navigate('/')} />
+            <Button label={'Acceuil'} onClick={() => navigate('/')} />
           </div>
         </div>
       </div>

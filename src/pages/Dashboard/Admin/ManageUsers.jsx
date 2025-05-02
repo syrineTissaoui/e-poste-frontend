@@ -1,134 +1,217 @@
-import { Helmet } from 'react-helmet-async';
-import UserDataRow from '../../../components/Dashboard/TableRows/UserDataRow';
-import { useQuery } from '@tanstack/react-query';
-import useAxiosSecure from '../../../hooks/useAxiosSecure';
-import useAuth from '../../../hooks/useAuth';
-import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
-import { useState } from 'react';
-import { PiArrowSquareLeftFill, PiArrowSquareRightFill } from "react-icons/pi";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { motion, AnimatePresence } from "framer-motion";
+import { toast } from 'react-toastify';
 
-const ManageUsers = () => {
-  const { user } = useAuth();
-  const axiosSecure = useAxiosSecure();
-  const { data: users = [], isLoading, refetch } = useQuery({
-    queryKey: ['users', user?.email],
-    queryFn: async () => {
-      const { data } = await axiosSecure(`/all-users/${user?.email}`);
-      return data;
-    },
+const apiUrl = "http://localhost:5000/api/utilisateurs"; // N'oublie pas de mettre le vrai lien d'API
+
+const GestionUtilisateurs = () => {
+  const [utilisateurs, setUtilisateurs] = useState([]);
+  const [recherche, setRecherche] = useState("");
+  const [filtreRole, setFiltreRole] = useState("");
+  const [filtreStatut, setFiltreStatut] = useState("");
+  const [modaleVisible, setModaleVisible] = useState(false);
+  const [utilisateurSelectionne, setUtilisateurSelectionne] = useState(null);
+  const [action, setAction] = useState("modifier");
+
+  useEffect(() => {
+  
+    fetchUtilisateurs();
+  }, []);
+
+  
+  const fetchUtilisateurs = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/Utilisateurs");
+      setUtilisateurs(res.data);
+      console.log("utilisateurs",res.data);
+      
+    } catch (error) {
+      console.error("Erreur lors du chargement des utilisateurs", error);
+      toast.error("Erreur lors du chargement des utilisateurs !");
+    }
+  };
+  const handleModifier = (utilisateur) => {
+    setUtilisateurSelectionne(utilisateur);
+    setAction("modifier");
+    setModaleVisible(true);
+  };
+
+  const handleSupprimer = async (utilisateur) => {
+    setUtilisateurSelectionne(utilisateur);
+    setAction("supprimer");
+    setModaleVisible(true);
+  };
+
+  const handleAjout = () => {
+    setUtilisateurSelectionne(null);
+    setAction("ajouter");
+    setModaleVisible(true);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const nouveau = {
+      nom: form.nom.value,
+      email: form.email.value,
+      role: form.role.value,
+      motDePasse : form.motDePasse.value,
+      status: form.status.value,
+    };
+
+    try {
+      if (action === "ajouter") {
+        await axios.post("http://localhost:5000/api/Utilisateurs", nouveau);
+        toast.success("Utilisateur ajouté avec succès !");
+      } else if (action === "modifier") {
+        await axios.put(`http://localhost:5000/api/Utilisateurs/${utilisateurSelectionne._id}`, nouveau);
+        toast.success("Utilisateur modifié avec succès !");
+      }
+      fetchUtilisateurs();
+      setModaleVisible(false);
+    } catch (err) {
+      console.error("Erreur lors de l'envoi du formulaire", err);
+      toast.error("Erreur lors de la mise à jour de l'utilisateur !");
+    }
+  };
+
+  const confirmerSuppression = async () => {
+    try {
+      await axios.delete(`${apiUrl}/${utilisateurSelectionne._id}`);
+      toast.success("Utilisateur supprimé avec succès !");
+      fetchUtilisateurs();
+      setModaleVisible(false);
+    } catch (error) {
+      console.error("Erreur lors de la suppression", error);
+      toast.error("Erreur lors de la suppression de l'utilisateur !");
+    }
+  };
+
+  const utilisateursFiltres = utilisateurs.filter((u) => {
+    return (
+      (u.nom?.toLowerCase().includes(recherche.toLowerCase()) ||
+        u.email?.toLowerCase().includes(recherche.toLowerCase())) &&
+      (filtreRole ? u.role === filtreRole : true) &&
+      (filtreStatut ? u.status === filtreStatut : true)
+    );
   });
 
- 
-  const [currentPage, setCurrentPage] = useState(1);
-  const usersPerPage = 5;
-
-  
-  const filteredUsers = users.filter((user) => user.role === 'customer');
-
-  
-  const indexOfLastUser = currentPage * usersPerPage;
-  const indexOfFirstUser = indexOfLastUser - usersPerPage;
-
-  
-  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
-
-  
-  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
-
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
+  const stats = {
+    clients: utilisateurs.filter((u) => u.role === "client").length,
+    livreurs: utilisateurs.filter((u) => u.role === "livreur").length,
+    supports: utilisateurs.filter((u) => u.role === "support-client").length,
   };
-
-  const handleNext = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-  };
-
-  const handlePrevious = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
-
-  if (isLoading) return <LoadingSpinner />;
 
   return (
-    <>
-      <div className="container mx-auto px-4 sm:px-8">
-        <Helmet>
-          <title>All Customers</title>
-        </Helmet>
-        <h1 className="text-3xl font-bold py-8 text-center text-indigo-600 bg-red-200">
-          Total Customers ( {filteredUsers.length} )
-        </h1>
-        <div className="pb-8">
-          <div className="overflow-x-auto">
-            <div className="min-w-full shadow-lg rounded-lg border border-gray-200">
-              <table className="min-w-full bg-white text-gray-700">
-                <thead className="bg-indigo-600 text-white">
-                  <tr>
-                    <th className="px-5 py-3 text-left text-sm font-semibold uppercase">Name</th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold uppercase">Email</th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold uppercase">Phone Number</th>
-                    <th className="px-5 py-3 text-left text-sm font-semibold uppercase">Role</th>
-                    <th className="px-5 py-3 text-left text-sm font-semibold uppercase">Status</th>
-                    <th className="px-5 py-3 text-left text-sm font-semibold uppercase">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {currentUsers.map((userData) => (
-                    <UserDataRow refetch={refetch} key={userData?._id} userData={userData} />
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-         
-          <div className="flex justify-center mt-8">
-            <nav className="inline-flex rounded-md shadow-sm" aria-label="Pagination">
-             
-              <button
-                onClick={handlePrevious}
-                disabled={currentPage === 1}
-                className={`pr-2 rounded-lg flex items-center border text-sm font-medium ${
-                  currentPage === 1
-                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    : 'bg-white text-indigo-600 border-gray-300 hover:bg-gray-100'
-                }`}
-              >
-                <PiArrowSquareLeftFill size={40} /> Previous
-              </button>
-
-            
-              {Array.from({ length: totalPages }, (_, index) => (
-                <button
-                  key={index + 1}
-                  onClick={() => handlePageChange(index + 1)}
-                  className={`px-5 py-2 mx-2 rounded-full border text-sm font-medium ${
-                    currentPage === index + 1
-                      ? 'bg-indigo-600 text-white'
-                      : 'bg-white text-indigo-600 border-gray-300 hover:bg-gray-100'
-                  }`}
-                >
-                  {index + 1}
-                </button>
-              ))}
-
-             
-              <button
-                onClick={handleNext}
-                disabled={currentPage === totalPages}
-                className={`pl-2 rounded-lg  flex items-center border text-sm font-medium ${
-                  currentPage === totalPages
-                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    : 'bg-white text-indigo-600 border-gray-300 hover:bg-gray-100'
-                }`}
-              >
-                <span className="px-2">Next</span> <PiArrowSquareRightFill size={40} />
-              </button>
-            </nav>
-          </div>
-        </div>
+    <div className="p-6 space-y-6">
+      {/* Statistiques */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-yellow-100 text-yellow-800 p-4 rounded-2xl shadow text-center">Clients : {stats.clients}</div>
+        <div className="bg-blue-100 text-blue-800 p-4 rounded-2xl shadow text-center">Livreurs : {stats.livreurs}</div>
+        <div className="bg-yellow-200 text-yellow-900 p-4 rounded-2xl shadow text-center">Supports : {stats.supports}</div>
       </div>
-    </>
+
+      {/* Filtres */}
+      <div className="flex flex-wrap gap-4">
+        <input
+          type="text"
+          placeholder="Rechercher par nom ou email"
+          className="p-2 border rounded w-full md:w-auto"
+          value={recherche}
+          onChange={(e) => setRecherche(e.target.value)}
+        />
+        <select className="p-2 border rounded" value={filtreRole} onChange={(e) => setFiltreRole(e.target.value)}>
+          <option value="">Tous les rôles</option>
+          <option value="client">Client</option>
+          <option value="livreur">Livreur</option>
+          <option value="support client">Support Client</option>
+        </select>
+        <select className="p-2 border rounded" value={filtreStatut} onChange={(e) => setFiltreStatut(e.target.value)}>
+          <option value="">Tous les statuts</option>
+          <option value="actif">Actif</option>
+          <option value="inactif">Inactif</option>
+        </select>
+        <button onClick={handleAjout} className="bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-2 px-4 rounded">
+          + Ajouter un utilisateur
+        </button>
+      </div>
+
+      {/* Tableau */}
+      <table className="w-full border text-left shadow rounded overflow-hidden">
+        <thead className="bg-blue-100 text-blue-800">
+          <tr>
+            <th className="p-2">Nom</th>
+            <th className="p-2">Email</th>
+            <th className="p-2">Rôle</th>
+            <th className="p-2">Statut</th>
+            <th className="p-2">Date</th>
+            <th className="p-2">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {utilisateursFiltres.map((u) => (
+            <tr key={u._id} className="border-t hover:bg-gray-50">
+              <td className="p-2">{u.nom}</td>
+              <td className="p-2">{u.email}</td>
+              <td className="p-2">{u.role}</td>
+              <td className="p-2">{u.status}</td>
+              <td className="p-2">{new Date(u.createdAt).toLocaleDateString()}</td>
+              <td className="p-2 flex gap-2">
+                <button className="text-blue-600" onClick={() => handleModifier(u)}>Modifier</button>
+                <button className="text-red-600" onClick={() => handleSupprimer(u)}>Supprimer</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {/* Modale */}
+      <AnimatePresence>
+        {modaleVisible && (
+          <motion.div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <motion.div className="bg-white p-6 rounded-2xl w-full max-w-md shadow"
+              initial={{ scale: 0.8 }} animate={{ scale: 1 }} exit={{ scale: 0.8 }}>
+              {action === "supprimer" ? (
+                <>
+                  <h2 className="text-xl font-semibold mb-4">Confirmer la suppression</h2>
+                  <p>Voulez-vous vraiment supprimer <strong>{utilisateurSelectionne.nom}</strong> ?</p>
+                  <div className="flex justify-end gap-2 mt-4">
+                    <button className="text-gray-600" onClick={() => setModaleVisible(false)}>Annuler</button>
+                    <button className="text-red-600" onClick={confirmerSuppression}>Supprimer</button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <h2 className="text-xl font-semibold mb-4">{action === "ajouter" ? "Ajouter" : "Modifier"} un utilisateur</h2>
+                  <form onSubmit={handleSubmit}>
+                    <input name="nom" type="text" defaultValue={utilisateurSelectionne?.nom} placeholder="Nom" className="w-full border p-2 mb-2 rounded" required />
+                    <input name="email" type="email" defaultValue={utilisateurSelectionne?.email} placeholder="Email" className="w-full border p-2 mb-2 rounded" required />
+                    <input name="motDePasse" type="password" defaultValue={utilisateurSelectionne?.motDePasse} placeholder="Mot de passe" className="w-full border p-2 mb-2 rounded" required />
+
+                    <select name="role" defaultValue={utilisateurSelectionne?.role} className="w-full border p-2 mb-2 rounded" required>
+                      <option value="client">Client</option>
+                      <option value="livreur">Livreur</option>
+                      <option value="support client">Support Client</option>
+                    </select>
+                    <select name="status" defaultValue={utilisateurSelectionne?.status} className="w-full border p-2 mb-2 rounded" required>
+                      <option value="actif">Actif</option>
+                      <option value="inactif">Inactif</option>
+                    </select>
+                    <div className="flex justify-end gap-2 mt-4">
+                      <button className="text-gray-600" type="button" onClick={() => setModaleVisible(false)}>Annuler</button>
+                      <button className="bg-yellow-400 hover:bg-yellow-500 text-white px-4 py-2 rounded">{action === "ajouter" ? "Ajouter" : "Modifier"}</button>
+                    </div>
+                  </form>
+                </>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 };
 
-export default ManageUsers;
+export default GestionUtilisateurs;

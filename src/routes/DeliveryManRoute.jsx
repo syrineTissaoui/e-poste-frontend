@@ -4,10 +4,11 @@ import LoadingSpinner from '../components/Shared/LoadingSpinner'
 import { Navigate } from 'react-router-dom'
 
 const DeliveryManRoute = ({ children }) => {
-  const [role, isLoading] = useRole()
+  const [ isLoading] = useRole()
+  const role =localStorage.getItem('userRole');
 
   if (isLoading) return <LoadingSpinner />
-  if (role === 'deliveryMan') return children
+  if (role === 'livreur') return children
   return <Navigate to='/dashboard' replace='true' />
 }
 

@@ -1,5 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
+import { v4 as uuidv4 } from 'uuid';
+
 
 const EnvoyerColis = () => {
   const [expediteur, setExpediteur] = useState({
@@ -79,21 +81,43 @@ const EnvoyerColis = () => {
   };
 
   const handleConfirmer = async () => {
+    const client_id = localStorage.getItem("userId")
     setLoading(true);
+    const numeroSuivi = uuidv4(); // Génère un numéro de suivi
+  
     try {
-      const response = await axios.post("/api/colis/envoyer", { expediteur, destinataire });
-      if (response.data && response.data.trackingNumber) {
-        setTrackingNumber(response.data.trackingNumber); // Enregistrement du numéro de suivi
+      const payload = {
+        numeroSuivi,
+        expediteur: expediteur.nom,
+        destinataire: destinataire.nom,
+        adresseExp: expediteur.adresse,
+        adresseDest: destinataire.adresse,
+        codePostal: destinataire.codePostal,
+        tel: destinataire.telephone,
+        type: expediteur.typeColis || "Standard",
+        poids: parseFloat(expediteur.poids),
+        dateExpedition: expediteur.dateRecuperation || new Date().toISOString(),
+        dateLivraison: null,
+        historique: "",
+        clientId:client_id
+      };
+  
+      const response = await axios.post("http://localhost:5000/api/colis/envoyer", payload);
+  
+      if (response.data?.colis?.numeroSuivi) {
+        setTrackingNumber(response.data.colis.numeroSuivi);
       }
+  
       setConfirmationMessage("Envoi confirmé !");
-      handleAnnuler(); 
+      handleAnnuler(); // Réinitialise le formulaire
     } catch (error) {
-      console.error(error);
-      setConfirmationMessage("Échec de l'envoi. Veuillez réessayer.");
+      console.error("Erreur d'envoi :", error.response?.data || error.message);
+      setConfirmationMessage("❌ Échec de l'envoi. Veuillez vérifier les champs obligatoires.");
     } finally {
       setLoading(false);
     }
   };
+  
 
   return (
     <div className="p-8">
