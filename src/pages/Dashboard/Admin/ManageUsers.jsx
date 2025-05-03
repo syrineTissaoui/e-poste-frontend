@@ -188,8 +188,12 @@ const GestionUtilisateurs = () => {
                   <form onSubmit={handleSubmit}>
                     <input name="nom" type="text" defaultValue={utilisateurSelectionne?.nom} placeholder="Nom" className="w-full border p-2 mb-2 rounded" required />
                     <input name="email" type="email" defaultValue={utilisateurSelectionne?.email} placeholder="Email" className="w-full border p-2 mb-2 rounded" required />
-                    <input name="motDePasse" type="password" defaultValue={utilisateurSelectionne?.motDePasse} placeholder="Mot de passe" className="w-full border p-2 mb-2 rounded" required />
-
+                    {action === "ajouter" && (
+  <input name="motDePasse" type="password" placeholder="Mot de passe" className="w-full border p-2 mb-2 rounded" required />
+)}
+{action === "modifier" && (
+  <input name="motDePasse" type="password" placeholder="Nouveau mot de passe " className="w-full border p-2 mb-2 rounded" />
+)}
                     <select name="role" defaultValue={utilisateurSelectionne?.role} className="w-full border p-2 mb-2 rounded" required>
                       <option value="client">Client</option>
                       <option value="livreur">Livreur</option>

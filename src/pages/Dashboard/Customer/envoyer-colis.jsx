@@ -96,12 +96,13 @@ const EnvoyerColis = () => {
         tel: destinataire.telephone,
         type: expediteur.typeColis || "Standard",
         poids: parseFloat(expediteur.poids),
+        prix: expediteur.fraisLivraison,
         dateExpedition: expediteur.dateRecuperation || new Date().toISOString(),
         dateLivraison: null,
         historique: "",
         clientId:client_id
       };
-  
+  console.log('payload',payload)
       const response = await axios.post("http://localhost:5000/api/colis/envoyer", payload);
   
       if (response.data?.colis?.numeroSuivi) {

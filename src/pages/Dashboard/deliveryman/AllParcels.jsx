@@ -27,6 +27,7 @@ const AllParcels = () => {
             return data;
         },
     });
+    console.log('parcels',parcels)
 
     
     useEffect(() => {
@@ -121,7 +122,7 @@ const AllParcels = () => {
 
                                 return (
                                     <tr key={_id} className="hover:bg-gray-100">
-                                        <td className="px-4 py-2 border-b">{id_colis}</td>
+                                        <td className="px-4 py-2 border-b">{_id}</td>
                                         <td className="px-4 py-2 border-b">{expediteur}</td>
                                         <td className="px-4 py-2 border-b">{destinataire}</td>
                                         <td className="px-4 py-2 border-b">{dateRecuperation}</td>

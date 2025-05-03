@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import BecomeSellerModal from '../../../Modal/BecomeSellerModal';
 import useAxiosSecure from '../../../../hooks/useAxiosSecure';
 import toast from 'react-hot-toast';
+import { IoHomeOutline } from "react-icons/io5";
 
 const CustomerMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
