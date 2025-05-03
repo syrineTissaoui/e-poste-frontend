@@ -60,16 +60,9 @@ const CustomerMenu = () => {
       <MenuItem icon={RiListOrdered} label='Historique' address='historique' />
       <MenuItem icon={RiListOrdered} label='Envoyer un Courrier' address='envoyer-courrier' />
 
+      <MenuItem icon={IoHomeOutline} label="Retour a la page d'acceuil" address="/"/>
 
-      {user?.role === 'client' && (
-        <button
-          onClick={() => setIsOpen(true)}
-          className='flex items-center px-4 py-2 mt-5 transition-colors duration-300 transform text-gray-600 hover:bg-gray-300 hover:text-gray-700 cursor-pointer'
-        >
-          <VscGitPullRequestGoToChanges className='w-5 h-5' />
-          <span className='mx-4 font-medium'>Request DeliveryMan</span>
-        </button>
-      )}
+     
 
       <BecomeSellerModal requestHandle={requestHandle} closeModal={closeModal} isOpen={isOpen} />
     </>
