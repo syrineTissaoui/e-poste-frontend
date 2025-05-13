@@ -36,6 +36,7 @@ const Login = () => {
       localStorage.setItem('userName', utilisateur.nom);
       localStorage.setItem('userEmail', utilisateur.email);
       localStorage.setItem('userRole', utilisateur.role);
+     
 
       setUser(utilisateur);
       toast.success('Connexion réussie');

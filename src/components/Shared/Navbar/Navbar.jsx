@@ -6,6 +6,7 @@ import logo from '../../../assets/images/logo-1.png';
 import Lottie from 'lottie-react';
 import menuAnimation from '../../../assets/lottie/menu.json';
 import toast from 'react-hot-toast';
+import { getDashboardHomeByRole } from '../../../routes/rolesRedirect'; // adapte le chemin selon ton arborescence
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -84,7 +85,7 @@ const Navbar = () => {
                           <h2 className='pl-4 pt-5'>Hello ! <span className='text-blue-50'>{user.displayName}</span></h2>
                           <div className="divider"></div>
                         </div>
-                        <Link to="/dashboard" className="px-4 py-2 hover:bg-neutral-200 transition font-semibold">Dashboard</Link>
+                        <Link  to={getDashboardHomeByRole(user.role)} className="px-4 py-2 hover:bg-neutral-200 transition font-semibold">Dashboard</Link>
                         <div
                           onClick={handleLogout}
                           className="px-4 py-3 hover:bg-neutral-200 transition font-semibold cursor-pointer"

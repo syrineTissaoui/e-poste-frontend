@@ -9,7 +9,7 @@ import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
 import useAuth from '../../../hooks/useAuth';
 import { ImCross } from 'react-icons/im';
 
-const AllParcels = () => {
+const GestionCourrier = () => {
     const { user } = useAuth(); 
     const [isOpen, setIsOpen] = useState(false);
     const [selectedParcel, setSelectedParcel] = useState(null);
@@ -23,7 +23,7 @@ const AllParcels = () => {
     const { data: parcels = [], isLoading, refetch } = useQuery({
         queryKey: ['parcels'],
         queryFn: async () => {
-            const { data } = await axios(`${import.meta.env.VITE_API_URL}/colis`);
+            const { data } = await axios(`${import.meta.env.VITE_API_URL}/courriers`);
             return data;
         },
     });
@@ -76,7 +76,7 @@ const AllParcels = () => {
                 statut: "En Transit"
               });
           const response = await axios.put(
-            `http://localhost:5000/api/colis/affecter/${selectedParcel._id}`,
+            `http://localhost:5000/api/courriers/affecter/${selectedParcel._id}`,
             {
               livreur: deliveryManID,
               dateLivraison: approximateDeliveryDate,
@@ -85,7 +85,7 @@ const AllParcels = () => {
           );
       
           console.log("✅ Server Response:", response.data);
-          refetch();        // Refresh the list
+           refetch();        // Refresh the list
           closeModal();     // Close modal
         } catch (error) {
           setError('Erreur lors de l’assignation du livreur.');
@@ -102,19 +102,18 @@ const AllParcels = () => {
     return (
         <Container>
             <Helmet>
-                <title>Tous Les Colis</title>
+                <title>Tous Les Couriers</title>
             </Helmet>
             <div className="mx-auto w-full">
-                <Heading title="Tous Les Colis"  />
+                <Heading title="Tous Les Corriers"  />
                 <div className="overflow-x-auto">
                     <table className="min-w-full table-auto">
                         <thead>
                             <tr className=' bg-yellow-200 '>
-                               <th className="px-4 py-2 border-b text-left ">id_Colis</th>
+                               <th className="px-4 py-2 border-b text-left ">id_Courrier</th>
                                 <th className="px-4 py-2 border-b text-left">Nom expediteur</th>
                                 <th className="px-4 py-2 border-b text-left">Nom destinataire</th>
                                 <th className="px-4 py-2 border-b text-left">date Recuperation</th>
-                                <th className="px-4 py-2 border-b text-left">Heure Recupation</th>
                                 <th className="px-4 py-2 border-b text-left">date Envoi</th>
                                 <th className="px-4 py-2 border-b text-left">prix</th>
                                 <th className="px-4 py-2 border-b text-left">statut</th>
@@ -124,7 +123,7 @@ const AllParcels = () => {
                         </thead>
                         <tbody>
                             {parcels.map((parcel) => {
-                                const { _id, expediteur, destinataire, heureRecuperation,dateRecuperation ,dateEnvoi, prix, statut } = parcel;
+                                const { _id, expediteur, destinataire,dateRecuperation ,dateEnvoi, prix, statut } = parcel;
 
                                 return (
                                     <tr key={_id} className="hover:bg-gray-100">
@@ -133,21 +132,20 @@ const AllParcels = () => {
                                         <td className="px-4 py-2 border-b">{destinataire}</td>
                                         <td className="px-4 py-2 border-b">{dateRecuperation}</td>
 
-                                        <td className="px-4 py-2 border-b">{heureRecuperation}</td>
                                         <td className="px-4 py-2 border-b">{dateEnvoi}</td>
                                         <td className="px-4 py-2 border-b">{prix}$</td>
                                         
                                         <td className="px-4 py-2 border-b">{statut}</td>
                                         <td className="px-4 py-2 border-b">
-                                        <Button
-  disabled={['Livré', 'En transit' , 'Annulé'].includes(statut) }
-  onClick={() => openModal(parcel)}
-  label={
-    ['Livré', 'En transit' , 'Annulé'].includes(statut)
-      ? statut.charAt(0).toUpperCase() + statut.slice(1)
-      : 'ajouter Livreur'
-  }
-/>
+                                       <Button
+                                        disabled={['Livré', 'En Transit' , 'Annulé'].includes(statut) }
+                                        onClick={() => openModal(parcel)}
+                                        label={
+                                          ['Livré', 'En Transit' , 'Annulé'].includes(statut)
+                                            ? statut.charAt(0).toUpperCase() + statut.slice(1)
+                                            : 'ajouter Livreur'
+                                        }
+                                      />
                                         </td>
                                     </tr>
                                 );
@@ -165,15 +163,15 @@ const AllParcels = () => {
                             >
                                 <ImCross />
                             </button>
-                            <h2 className="text-xl font-semibold mb-4">Assign Deliveryman</h2>
+                            <h2 className="text-xl font-semibold mb-4">affecter Livreur</h2>
                             <div className="mb-4">
-                                <label className="block">Select Delivery Man</label>
+                                <label className="block">Selectionner Livreur</label>
                                 <select
                                     className="w-full px-4 py-2 border rounded-md"
                                     value={deliveryManID}
                                     onChange={(e) => setDeliveryManID(e.target.value)}
                                 >
-                                    <option value="">-- Select Delivery Man --</option>
+                                    <option value="">-- Selectionner Livreur--</option>
                                     {deliveryMen.map((deliveryMan) => (
                                         <option key={deliveryMan._id} value={deliveryMan._id}>
                                             {deliveryMan.nom}
@@ -182,7 +180,7 @@ const AllParcels = () => {
                                 </select>
                             </div>
                             <div className="mb-4">
-                                <label className="block">Approximate Delivery Date</label>
+                                <label className="block">Date Livraison</label>
                                 <input
                                     type="date"
                                     className="w-full px-4 py-2 border rounded-md"
@@ -192,7 +190,7 @@ const AllParcels = () => {
                             </div>
                             {error && <p className="text-red-500">{error}</p>}
                             <Button
-                                label={isSubmitting ? 'Assigning...' : 'Assign Delivery Man'}
+                                label={isSubmitting ? 'Assigning...' : 'Affcter Livreur'}
                                 onClick={handleAssignDeliveryMan}
                                 disabled={isSubmitting || !deliveryManID || !approximateDeliveryDate}
                             />
@@ -204,4 +202,4 @@ const AllParcels = () => {
     );
 };
 
-export default AllParcels;
+export default GestionCourrier;

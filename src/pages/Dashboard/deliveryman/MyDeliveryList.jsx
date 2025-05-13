@@ -23,15 +23,18 @@ const MyDeliveryList = () => {
       };
     },
   });
+  console.log('my-deliveries',axios.get('http://localhost:5000/api/colis'))
 
   if (isLoading) return <LoadingSpinner />;
 
+  
   const filteredColis = data.colis.filter(
-    (item) => item.livreur === deliveryManId && ['En attente', 'En cours', 'Livré'].includes(item.statut)
+    (item) => item.Livreur === deliveryManId 
   );
+  console.log('filteredColis',filteredColis)
 
   const filteredCourriers = data.courriers.filter(
-    (item) => item.livreur === deliveryManId && ['En attente', 'Traité', 'Livré'].includes(item.statut)
+    (item) => item.Livreur === deliveryManId 
   );
 
   const handleCancel = async (item, type) => {
@@ -91,28 +94,30 @@ const MyDeliveryList = () => {
         <td className="border px-4 py-2">{item.adresseDest}</td>
         <td className="border px-4 py-2 font-medium">{item.statut}</td>
         <td className="border px-4 py-2 space-x-2">
-          {item.statut === 'En attente' && (
-            <>
-              <button
-                onClick={() => handleCancel(item, type)}
-                className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-              >
-                Annuler
-              </button>
-              <button
-                onClick={() => handleDeliver(item, type)}
-                className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
-              >
-                Livré
-              </button>
-            </>
-          )}
-          {item.statut === 'Livré' && (
-            <span className="bg-gray-300 px-3 py-1 rounded text-gray-700">
-              Livré
-            </span>
-          )}
-        </td>
+  {(item.statut === 'En attente' || item.statut === 'En Transit') && (
+    <>
+      <button
+        onClick={() => handleCancel(item, type)}
+        className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+      >
+        Annuler
+      </button>
+      <button
+        onClick={() => handleDeliver(item, type)}
+        className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
+      >
+        Livré
+      </button>
+    </>
+  )}
+
+  {item.statut === 'Livré' && (
+    <span className="bg-gray-300 px-3 py-1 rounded text-gray-700">
+      Livré
+    </span>
+  )}
+</td>
+
       </tr>
     ))
   );

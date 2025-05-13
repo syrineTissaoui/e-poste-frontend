@@ -37,6 +37,7 @@ import EnvoyerCourrier from '../pages/Dashboard/Customer/enoyer-courrier'
 import EnvoyerColis from '../pages/Dashboard/Customer/envoyer-colis'
 import GestionPaiements from '../pages/Dashboard/Admin/gestion-paiement'
 import Contact from '../pages/contact'
+import GestionCourrier from '../pages/Dashboard/Admin/gestion-courrier'
 
 export const router = createBrowserRouter([
   {
@@ -87,6 +88,12 @@ export const router = createBrowserRouter([
         path: 'Gestion-paiement',
         element: (<PrivateRoute>
           <GestionPaiements></GestionPaiements>
+        </PrivateRoute>)
+      },
+      {
+        path: 'Gestion-Courrier',
+        element: (<PrivateRoute>
+          <GestionCourrier></GestionCourrier>
         </PrivateRoute>)
       },
       

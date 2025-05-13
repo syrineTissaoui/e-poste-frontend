@@ -7,6 +7,7 @@ import BecomeSellerModal from '../../../Modal/BecomeSellerModal';
 import useAxiosSecure from '../../../../hooks/useAxiosSecure';
 import toast from 'react-hot-toast';
 import { IoHomeOutline } from "react-icons/io5";
+import { CgProfile } from "react-icons/cg";
 
 const CustomerMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -55,11 +56,12 @@ const CustomerMenu = () => {
 
   return (
     <>
-          <MenuItem icon={RiListOrdered} label='Acceuil' address='acceuil-client' />
+          <MenuItem icon={RiListOrdered} label='Acceuil' address='/dashboard/acceuil-client' />
 
-      <MenuItem icon={BsFillBoxSeamFill} label='Evoyer un Colis' address='envoyer-colis' />
-      <MenuItem icon={RiListOrdered} label='Historique' address='historique' />
-      <MenuItem icon={RiListOrdered} label='Envoyer un Courrier' address='envoyer-courrier' />
+      <MenuItem icon={BsFillBoxSeamFill} label='Evoyer un Colis' address='/dashboard/envoyer-colis' />
+      <MenuItem icon={RiListOrdered} label='Historique' address='/dashboard/historique' />
+      <MenuItem icon={RiListOrdered} label='Envoyer un Courrier' address='/dashboard/envoyer-courrier' />
+      <MenuItem icon={CgProfile} label=" Mon Profile" address="/dashboard/profile"/>
 
       <MenuItem icon={IoHomeOutline} label="Retour a la page d'acceuil" address="/"/>
 

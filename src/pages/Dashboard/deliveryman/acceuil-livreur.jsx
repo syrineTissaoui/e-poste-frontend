@@ -40,15 +40,14 @@ const AcceuilLivreur = () => {
       .catch(err => console.error(err));
   }, []);
 
-  console.log("activitiesLivreur",activitiesLivreur);
-  
+ 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const { data: colis } = await axios.get('http://localhost:5000/api/colis/get-colis-livreur?livreurId=${livreurId}');
-        const { data: courriers } = await axios.get('http://localhost:5000/api/courriers/?livreurId=${livreurId}');
+        const { data: colis } = await axios.get(`http://localhost:5000/api/colis/get-colis-livreur?livreurId=${livreurId}`);
+        const { data: courriers } = await axios.get(`http://localhost:5000/api/courriers/?livreurId=${livreurId}`);
         
-
+console.log('colis',colis)
 
         setStatData(colis);
         setCouriersData(courriers);
@@ -64,11 +63,16 @@ const AcceuilLivreur = () => {
 
   if (loading) return <LoadingSpinner />;
   if (error) return <p className="text-red-500">Error: {error}</p>;
-
-  const colisEnAttente = statData.filter(c => c.statut === 'En attente').length || 0;
-  const colisLivré = statData.filter(c => c.statut === 'Livré').length || 0;
-  const courrierEnAttente = couriersData.filter(c => c.statut === 'En attente').length || 0;
-  const courrierLivré = couriersData.filter(c => c.statut === 'Livré').length || 0;
+  const deliveryManId = localStorage.getItem('userId');
+  const colisEnAttente = statData.filter(c => c.statut === 'En attente' && c.Livreur === deliveryManId
+  ).length ;
+  const colisLivré = statData.filter(c => c.statut === 'Livré' && c.Livreur === deliveryManId
+  ).length;
+  const courrierEnAttente = couriersData.filter(
+    c => c.statut === 'En attente' && c.Livreur === deliveryManId
+  ).length;
+    const courrierLivré = couriersData.filter(c => c.statut === 'Livré' && c.Livreur === deliveryManId
+    ).length;
   
 
   const renderCards = (items) => (
@@ -118,7 +122,7 @@ et roule en toute tranquillité avec E-poste !  </h4>
     </div>
   </div>
 </div>
-{stats && (
+
       <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {/* Colis Envoyés */}
         <div className="bg-blue-500 text-blue-800 rounded-xl shadow-md">
@@ -126,7 +130,7 @@ et roule en toute tranquillité avec E-poste !  </h4>
             <p className="text-2xl">Colis Livrés </p>
             </div>
             <div className="p-4 text-center">
-            <h4 className="text-2xl font-semibold">{stats.colisLivres}</h4>
+            <h4 className="text-2xl font-semibold">{colisLivré}</h4>
             </div>
         </div>
 
@@ -136,7 +140,7 @@ et roule en toute tranquillité avec E-poste !  </h4>
             <p className="text-2xl">Colis en attente</p>
             </div>
             <div className="p-4 text-center">
-            <h4 className="text-2xl font-semibold">{stats.colisEnAttente}</h4>
+            <h4 className="text-2xl font-semibold">{colisEnAttente}</h4>
           </div>
         </div>
 
@@ -146,7 +150,7 @@ et roule en toute tranquillité avec E-poste !  </h4>
             <p className="text-2xl">Courriers livrés</p>
             </div>
             <div className="p-4 text-center">
-            <h4 className="text-2xl font-semibold">{stats.courriersLivres}</h4> 
+            <h4 className="text-2xl font-semibold">{courrierLivré}</h4> 
           </div>
         </div>
         <div className="bg-yellow-200 text-yellow-600 rounded-xl shadow-md">
@@ -154,14 +158,14 @@ et roule en toute tranquillité avec E-poste !  </h4>
             <p className="text-2xl">Courriers en attente</p>
             </div>
             <div className="p-4 text-center">
-            <h4 className="text-2xl font-semibold">{stats.courriersEnAttente}</h4> 
+            <h4 className="text-2xl font-semibold">{courrierEnAttente}</h4> 
           </div>
         </div>
 
        
        
       </div>
-)}
+
       {/* Charts */}
 
       <div className="container mx-auto px-4 py-6">

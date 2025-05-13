@@ -113,9 +113,7 @@ console.log("enCours",enCours);
         >
           Créer un ticket
         </button>
-            <button className="border border-gray-300 px-4 py-2 rounded text-sm">
-              Contacter le client
-            </button>
+          
           </div>
         </div>
         <table className="min-w-full text-sm text-left">

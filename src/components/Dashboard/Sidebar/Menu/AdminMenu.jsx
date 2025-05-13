@@ -11,7 +11,8 @@ const AdminMenu = () => {
   return (
     <>
       <MenuItem icon={BsGraphUp} label='Acceuil' address='/dashboard'/>
-      <MenuItem icon={CiBoxList} label='Gestion des Couriers' address='/dashboard/allParcels'/>
+      <MenuItem icon={CiBoxList} label='Gestion des Colis' address='/dashboard/allParcels'/>
+      <MenuItem icon={CiBoxList} label='Gestion des Courriers' address='/dashboard/Gestion-Courrier'/>
       <MenuItem icon={FaUsersGear} label='Gestion des Utilisateurs' address='/dashboard/manage-users'/>
       <MenuItem icon={FaUsersGear} label='Gestion des Paiements' address='/dashboard/Gestion-paiement'/>
 

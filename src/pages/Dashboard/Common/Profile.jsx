@@ -83,13 +83,7 @@ const Profile = () => {
             className='w-full h-40 object-cover'
           />
           <div className='absolute inset-0 bg-black bg-opacity-30'></div>
-          <div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>
-            <img
-              alt='profile'
-              src={user.photoURL ? `http://localhost:5000/uploads/${user.photoURL}`: 'https://via.placeholder.com/150'}
-              className='mx-auto object-cover rounded-full h-24 w-24 border-4 border-white'
-            />
-          </div>
+         
         </div>
         <div className='text-center mt-6 p-6'>
           <p className='text-sm btn bg-green-500 rounded-full text-white mb-1'>{user.role}</p>

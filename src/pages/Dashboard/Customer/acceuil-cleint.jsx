@@ -18,8 +18,6 @@ const iconByType = {
 const AcceuilDashboard = () => {
   const [statData, setStatData] = useState([]);
   const [couriersData, setCouriersData] = useState([]);
-  const [clinetsData, setClientsData] = useState([]);
-  const [livreurData, setLivreurData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [activities, setActivities] = useState([]);
@@ -38,21 +36,25 @@ const AcceuilDashboard = () => {
       .catch(err => console.error(err));
   }, []);
 
-  console.log("activitiesClient",activitiesClient);
   
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const { data: colis } = await axios.get('http://localhost:5000/api/colis');
-        const { data: courriers } = await axios.get('http://localhost:5000/api/courriers');
-        const { data: clients } = await axios.get('http://localhost:5000/api/clients');
-        const { data: livreurs } = await axios.get('http://localhost:5000/api/livreurs');
+ 
+
+const { data: colis } = await axios.get(`http://localhost:5000/api/colis/get`, {
+  params: { clientId }
+});
+const { data: courriers } = await axios.get(`http://localhost:5000/api/colis/get`, {
+  params: { clientId }
+});
+
+       
 
 
         setStatData(colis);
         setCouriersData(courriers);
-        setClientsData(clients);
-        setLivreurData(livreurs)
+        
       } catch (err) {
         setError(err.message || 'Failed to load data');
       } finally {
@@ -61,7 +63,6 @@ const AcceuilDashboard = () => {
     };
     fetchStats();
   }, []);
-console.log('activitiesClient',activitiesClient);
 
   if (loading) return <LoadingSpinner />;
   if (error) return <p className="text-red-500">Error: {error}</p>;
@@ -116,7 +117,7 @@ Suivez nos envois de maniére plus efficace        </h4>
             <p className="text-2xl">Livrés</p>
             </div>
             <div className="p-4 text-left">
-            <h4 className="text-2xl font-semibold">{colisEnAttente}</h4>
+            <h4 className="text-2xl font-semibold">{colisLivré}</h4>
           </div>
         </div>
 
@@ -126,7 +127,7 @@ Suivez nos envois de maniére plus efficace        </h4>
             <p className="text-2xl">En Attente</p>
             </div>
             <div className="p-4 text-left">
-            <h4 className="text-2xl font-semibold">{colisLivré}</h4> 
+            <h4 className="text-2xl font-semibold">{ colisEnAttente}</h4> 
           </div>
         </div>
 

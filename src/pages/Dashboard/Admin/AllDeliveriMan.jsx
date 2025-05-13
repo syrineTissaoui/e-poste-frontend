@@ -39,11 +39,10 @@ const AllDeliveryMan = () => {
           <table className="min-w-full bg-white text-gray-700">
             <thead className="bg-blue-600 text-white">
               <tr>
-                <th className="px-5 py-3 text-left text-sm font-semibold uppercase">Name</th>
+                <th className="px-5 py-3 text-left text-sm font-semibold uppercase">Nom</th>
                 <th className="px-4 py-3 text-left text-sm font-semibold uppercase">Email</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold uppercase">Phone</th>
-                <th className="px-5 py-3 text-left text-sm font-semibold uppercase">Rating</th>
-                <th className="px-5 py-3 text-left text-sm font-semibold uppercase">Parcels</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold uppercase">Telephone</th>
+
               </tr>
             </thead>
             <tbody>
@@ -51,9 +50,8 @@ const AllDeliveryMan = () => {
                 <tr key={deliveryMan._id}>
                   <td className="px-5 py-5 border-b bg-white text-sm">{deliveryMan.nom || 'N/A'}</td>
                   <td className="px-4 py-5 border-b bg-white text-sm">{deliveryMan.email}</td>
-                  <td className="px-4 py-5 border-b bg-white text-sm">{deliveryMan.telephone || 'N/A'}</td>
-                  <td className="px-5 py-5 border-b bg-white text-sm">{deliveryMan.averageRating || '0.0'}</td>
-                  <td className="px-5 py-5 border-b bg-white text-sm">{deliveryMan.totalReviews || 0}</td>
+                  <td className="px-4 py-5 border-b bg-white text-sm">{deliveryMan.phone || 'N/A'}</td>
+                  
                 </tr>
               ))}
             </tbody>
