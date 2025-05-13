@@ -1,14 +1,16 @@
+import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
-import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 
 const MyDeliveryList = () => {
   const queryClient = useQueryClient();
   const deliveryManId = localStorage.getItem('userId');
+
+  const [filtreType, setFiltreType] = useState('');
+  const [filtreDate, setFiltreDate] = useState('');
 
   const { data, isLoading } = useQuery({
     queryKey: ['my-deliveries', deliveryManId],
@@ -23,19 +25,11 @@ const MyDeliveryList = () => {
       };
     },
   });
-  console.log('my-deliveries',axios.get('http://localhost:5000/api/colis'))
 
   if (isLoading) return <LoadingSpinner />;
 
-  
-  const filteredColis = data.colis.filter(
-    (item) => item.Livreur === deliveryManId 
-  );
-  console.log('filteredColis',filteredColis)
-
-  const filteredCourriers = data.courriers.filter(
-    (item) => item.Livreur === deliveryManId 
-  );
+  const filteredColis = data.colis.filter((item) => item.Livreur === deliveryManId);
+  const filteredCourriers = data.courriers.filter((item) => item.Livreur === deliveryManId);
 
   const handleCancel = async (item, type) => {
     if (item.statut !== 'En attente') {
@@ -84,57 +78,87 @@ const MyDeliveryList = () => {
     }
   };
 
-  const renderRows = (items, type) => (
-    items.map((item) => (
-      <tr key={item._id} className="text-center">
-                <td className="border px-4 py-2">{type === 'colis' ? 'Colis' : 'Courrier'}</td>
+  const renderRows = (items, type) => {
+    if (filtreType && type !== filtreType) return null;
 
+    const filtered = items.filter((item) => {
+      if (filtreDate && item.dateLivraison) {
+        return item.dateLivraison.startsWith(filtreDate);
+      }
+      return true;
+    });
+
+    return filtered.map((item) => (
+      <tr key={item._id} className="text-center">
+        <td className="border px-4 py-2">{type === 'colis' ? 'Colis' : 'Courrier'}</td>
         <td className="border px-4 py-2">{item.destinataire}</td>
         <td className="border px-4 py-2">{item.tel}</td>
         <td className="border px-4 py-2">{item.adresseDest}</td>
         <td className="border px-4 py-2 font-medium">{item.statut}</td>
+        <td className="border px-4 py-2">
+          {item.dateLivraison ? new Date(item.dateLivraison).toLocaleDateString() : '-'}
+        </td>
         <td className="border px-4 py-2 space-x-2">
-  {(item.statut === 'En attente' || item.statut === 'En Transit') && (
-    <>
-      <button
-        onClick={() => handleCancel(item, type)}
-        className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-      >
-        Annuler
-      </button>
-      <button
-        onClick={() => handleDeliver(item, type)}
-        className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
-      >
-        Livré
-      </button>
-    </>
-  )}
-
-  {item.statut === 'Livré' && (
-    <span className="bg-gray-300 px-3 py-1 rounded text-gray-700">
-      Livré
-    </span>
-  )}
-</td>
-
+          {(item.statut === 'En attente' || item.statut === 'En Transit') && (
+            <>
+              <button
+                onClick={() => handleCancel(item, type)}
+                className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={() => handleDeliver(item, type)}
+                className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
+              >
+                Livré
+              </button>
+            </>
+          )}
+          {item.statut === 'Livré' && (
+            <span className="bg-gray-300 px-3 py-1 rounded text-gray-700">
+              Livré
+            </span>
+          )}
+        </td>
       </tr>
-    ))
-  );
+    ));
+  };
 
   return (
     <div className="container mx-auto px-4 py-6">
       <h2 className="text-2xl font-bold mb-4">Mes Colis et Courriers Assignés</h2>
+
+      {/* Filtres */}
+      <div className="flex flex-wrap gap-4 mb-6">
+        <select
+          value={filtreType}
+          onChange={(e) => setFiltreType(e.target.value)}
+          className="p-2 border rounded"
+        >
+          <option value="">Tous les types</option>
+          <option value="colis">Colis</option>
+          <option value="courriers">Courriers</option>
+        </select>
+
+        <input
+          type="date"
+          value={filtreDate}
+          onChange={(e) => setFiltreDate(e.target.value)}
+          className="p-2 border rounded"
+        />
+      </div>
+
       <div className="overflow-x-auto">
         <table className="min-w-full border border-gray-300 text-sm">
           <thead className="bg-blue-100">
             <tr>
-            <th className="px-4 py-2 border">Type</th>
-
+              <th className="px-4 py-2 border">Type</th>
               <th className="px-4 py-2 border">Destinataire</th>
               <th className="px-4 py-2 border">Téléphone</th>
               <th className="px-4 py-2 border">Adresse</th>
               <th className="px-4 py-2 border">Statut</th>
+              <th className="px-4 py-2 border">Date de livraison</th>
               <th className="px-4 py-2 border">Action</th>
             </tr>
           </thead>

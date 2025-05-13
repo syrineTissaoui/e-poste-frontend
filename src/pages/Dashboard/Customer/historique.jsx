@@ -45,7 +45,9 @@ const HistoriqueEnvois = () => {
     setFiltreDate(value);
     filtrerEnvois(searchTerm, filtreType, value);
   };
-
+const getDateEnvoi = (envoi) => {
+  return envoi.type === "courrier" ? envoi.c.dateEnvoi : envoi.c.dateExpedition;
+};
   const filtrerEnvois = (search, type, date) => {
     let data = envois;
 
@@ -57,9 +59,9 @@ const HistoriqueEnvois = () => {
     if (type) {
       data = data.filter((envoi) => envoi.type.toLowerCase() === type);
     }
-    if (date) {
-      data = data.filter((envoi) => envoi.dateEnvoi.startsWith(date));
-    }
+   if (date) {
+  data = data.filter((envoi) => getDateEnvoi(envoi).startsWith(date));
+}
 
     setFilteredEnvois(data);
   };
@@ -74,17 +76,24 @@ const HistoriqueEnvois = () => {
     setSelectedEnvoi(null);
   };
 
-  const supprimerEnvoi = async (id , type) => {
-    if (confirm("Voulez-vous vraiment supprimer cet envoi ?")) {
-      try {
-        await axios.delete(`http://localhost:5000/api/${type}/${id}`);
-        setEnvois((prev) => prev.filter((e) => e._id !== id));
-        setFilteredEnvois((prev) => prev.filter((e) => e._id !== id));
-      } catch (error) {
-        console.error("Erreur lors de la suppression :", error);
-      }
+  const supprimerEnvoi = async (id, type) => {
+  if (confirm("Voulez-vous vraiment supprimer cet envoi ?")) {
+    try {
+      // Utilise le bon nom de collection dans l'URL
+      const endpoint = type === 'courrier' ? 'courriers' : 'colis';
+
+      await axios.delete(`http://localhost:5000/api/${endpoint}/${id}`);
+
+      setEnvois((prev) => prev.filter((e) => e.c._id !== id));
+      setFilteredEnvois((prev) => prev.filter((e) => e.c._id !== id));
+
+      console.log("Envoi supprimé avec succès !");
+    } catch (error) {
+      console.error("Erreur lors de la suppression :", error);
     }
-  };
+  }
+};
+
 
   const annulerEnvoi = async (id) => {
     if (confirm("Voulez-vous vraiment annuler cet envoi ?")) {

@@ -131,7 +131,7 @@ console.log("enCours",enCours);
               <tr key={i} className="border-b hover:bg-gray-50">
                 <td className="px-6 py-4 font-semibold">#{item._id.slice(-5)}</td>
                 <td className="px-6 py-4">{item.sujet}</td>
-                <td className="px-6 py-4">{item.utilisateur.nom}</td>
+                <td className="px-6 py-4">{item.utilisateur?.nom}</td>
                 <td className="px-6 py-4">
                   <span className={statusBadge(item.statut)}>{item.statut}</span>
                 </td>

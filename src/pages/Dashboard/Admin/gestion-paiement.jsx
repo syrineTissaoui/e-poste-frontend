@@ -58,14 +58,19 @@ const GestionPaiements = () => {
   
     fetchPaiements();
   }, []);
-  
-
-  const paiementsFiltres = paiements.filter(p =>
-    (p.client.toLowerCase().includes(filtreNom.toLowerCase()) ||
-      p.numeroPaiement.toLowerCase().includes(filtreNom.toLowerCase())) &&
-    (filtreType ? p.type === filtreType : true) &&
-    (filtreDate ? p.datePaiement.slice(0, 10) === filtreDate : true)
-  )
+const formatDate = (date) => {
+  if (!date) return "";
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return "";
+  return d.toISOString().slice(0, 10);
+};
+const paiementsFiltres = paiements.filter(p =>
+  (p.client.toLowerCase().includes(filtreNom.toLowerCase()) ||
+    p.numeroPaiement.toLowerCase().includes(filtreNom.toLowerCase())) &&
+  (filtreType ? p.type === filtreType : true) &&
+  (filtreDate ? formatDate(p.datePaiement) === filtreDate : true)
+);
+ 
 
   const handleDelete = async () => {
     try {

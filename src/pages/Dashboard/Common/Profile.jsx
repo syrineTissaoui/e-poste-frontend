@@ -27,40 +27,56 @@ const Profile = () => {
     setLoading(false);
   }, []);
 
-  const handleUpdate = async () => {
-    const { value: formValues } = await Swal.fire({
-      title: 'Mettre à jour le profil',
-      html:
-        '<input id="swal-name" class="swal2-input" placeholder="Nom complet">' +
-        '<input id="swal-phone" class="swal2-input" placeholder="Téléphone">',
-      focusConfirm: false,
-      showCancelButton: true,
-      confirmButtonText: 'Mettre à jour',
-      preConfirm: () => {
-        return {
-          nom: document.getElementById('swal-name').value,
-          phone: document.getElementById('swal-phone').value
-        };
-      }
-    });
-
-    if (formValues) {
-      try {
-        await axios.put(`http://localhost:5000/api/utilisateurs/${user.uid}`, {
-          nom: formValues.nom,
-          phone: formValues.phone
-        });
-
-        localStorage.setItem('userName', formValues.nom);
-        localStorage.setItem('userPhone', formValues.phone);
-        setUser({ ...user, displayName: formValues.nom, phone: formValues.phone });
-        toast.success('Profil mis à jour avec succès');
-      } catch (error) {
-        console.error(error);
-        toast.error("Erreur lors de la mise à jour du profil");
-      }
+ const handleUpdate = async () => {
+  const { value: formValues } = await Swal.fire({
+    title: 'Mettre à jour le profil',
+    html:
+      '<input id="swal-name" class="swal2-input" placeholder="Nom complet">' +
+      '<input id="swal-phone" class="swal2-input" placeholder="Téléphone">' +
+      '<input id="swal-email" type="email" class="swal2-input" placeholder="Email">' +
+      '<input id="swal-password" type="password" class="swal2-input" placeholder="Nouveau mot de passe">',
+    focusConfirm: false,
+    showCancelButton: true,
+    confirmButtonText: 'Mettre à jour',
+    preConfirm: () => {
+      return {
+        nom: document.getElementById('swal-name').value,
+        phone: document.getElementById('swal-phone').value,
+        email: document.getElementById('swal-email').value,
+        password: document.getElementById('swal-password').value
+      };
     }
-  };
+  });
+
+  if (formValues) {
+    try {
+      await axios.put(`http://localhost:5000/api/utilisateurs/${user.uid}`, {
+        nom: formValues.nom,
+        phone: formValues.phone,
+        email: formValues.email,
+        password: formValues.password
+      });
+
+      // Màj localStorage et état local
+      localStorage.setItem('userName', formValues.nom);
+      localStorage.setItem('userPhone', formValues.phone);
+      localStorage.setItem('userEmail', formValues.email);
+
+      setUser({
+        ...user,
+        displayName: formValues.nom,
+        phone: formValues.phone,
+        email: formValues.email
+      });
+
+      toast.success('Profil mis à jour avec succès');
+    } catch (error) {
+      console.error(error);
+      toast.error("Erreur lors de la mise à jour du profil");
+    }
+  }
+};
+
 
   if (loading) return <LoadingSpinner />;
 

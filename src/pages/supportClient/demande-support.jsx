@@ -90,6 +90,7 @@ const DemandeSupport = () => {
       default: return `${base} bg-red-400`;
     }
   };
+  console.log('tickets',tickets)
 
   return (
     <div className="p-6 space-y-6">
@@ -121,7 +122,7 @@ const DemandeSupport = () => {
               <tr key={i} className="border-b hover:bg-gray-50">
                 <td className="px-6 py-4 font-semibold">#{item._id.slice(-5)}</td>
                 <td className="px-6 py-4">{item.sujet}</td>
-                <td className="px-6 py-4">{item.utilisateur.nom}</td>
+                <td className="px-6 py-4">{item.utilisateur?.nom}</td>
                 <td className="px-6 py-4">
                   <span className={statusBadge(item.statut)}>{item.statut}</span>
                 </td>

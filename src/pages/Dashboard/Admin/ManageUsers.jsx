@@ -56,7 +56,6 @@ const GestionUtilisateurs = () => {
       nom: form.nom.value,
       email: form.email.value,
       role: form.role.value,
-      motDePasse : form.motDePasse.value,
       status: form.status.value,
     };
 
@@ -191,9 +190,7 @@ const GestionUtilisateurs = () => {
                     {action === "ajouter" && (
   <input name="motDePasse" type="password" placeholder="Mot de passe" className="w-full border p-2 mb-2 rounded" required />
 )}
-{action === "modifier" && (
-  <input name="motDePasse" type="password" placeholder="Nouveau mot de passe " className="w-full border p-2 mb-2 rounded" />
-)}
+
                     <select name="role" defaultValue={utilisateurSelectionne?.role} className="w-full border p-2 mb-2 rounded" required>
                       <option value="client">Client</option>
                       <option value="livreur">Livreur</option>
