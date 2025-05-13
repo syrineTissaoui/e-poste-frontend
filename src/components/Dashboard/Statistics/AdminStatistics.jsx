@@ -159,7 +159,6 @@ const AdminStatistics = () => {
                 <p className="text-xs text-gray-500">{activity.timeAgo}</p>
               </div>
             </div>
-            <a href="#" className="text-sm text-blue-700 hover:underline">En savoir plus</a>
           </li>
         ))}
       </ul>

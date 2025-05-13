@@ -1,5 +1,6 @@
 import { FaTruck, FaGlobe, FaMapMarkedAlt, FaBoxes, FaHome, FaMapMarkerAlt, FaShippingFast, FaBoxOpen, FaQuestionCircle, FaCheckCircle, FaClock, FaHeadset, FaDollarSign } from 'react-icons/fa';
 import logo from "../assets/images/services.jpg"
+import { Link } from 'react-router-dom';
 const services = [
   {
     title: "Livraison le jour même",
@@ -122,9 +123,13 @@ const LandingService = () => {
         <p className="text-gray-600 mt-2">
           Contactez notre service client pour toute question ou assistance concernant l'expédition.
         </p>
-        <button className="mt-4 px-6 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded font-semibold shadow">
-          Contactez-nous
-        </button>
+        <Link
+  to="/Contact"
+  role="button"
+  className="inline-block mt-4 px-6 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded font-semibold shadow"
+>
+  📩 Contactez-nous
+</Link>
       </div>
     </div>
   );
