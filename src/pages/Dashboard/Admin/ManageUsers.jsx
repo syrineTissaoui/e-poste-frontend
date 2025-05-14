@@ -123,7 +123,7 @@ const GestionUtilisateurs = () => {
           <option value="">Tous les rôles</option>
           <option value="client">Client</option>
           <option value="livreur">Livreur</option>
-          <option value="support client">Support Client</option>
+          <option value="support-client">Support Client</option>
         </select>
         <select className="p-2 border rounded" value={filtreStatut} onChange={(e) => setFiltreStatut(e.target.value)}>
           <option value="">Tous les statuts</option>

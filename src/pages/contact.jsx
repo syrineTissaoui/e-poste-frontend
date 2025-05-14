@@ -1,13 +1,47 @@
-import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaFacebook, FaLinkedin, FaTwitter } from 'react-icons/fa';
+import { useState } from 'react';
+import axios from 'axios';
+import toast from 'react-hot-toast';
+import {
+  FaEnvelope, FaPhone, FaMapMarkerAlt,
+  FaFacebook, FaLinkedin, FaTwitter
+} from 'react-icons/fa';
 
 const Contact = () => {
+  const [form, setForm] = useState({ nom: '', message: '' });
+
+  const userId = localStorage.getItem('userId'); // l'utilisateur connecté
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!userId) return toast.error("Vous devez être connecté pour envoyer un ticket");
+
+    try {
+      await axios.post('http://localhost:5000/api/tickets', {
+        sujet: form.nom,
+        description: form.message,
+        utilisateur: userId
+      });
+
+      toast.success("Votre demande a été envoyée avec succès !");
+      setForm({ nom: '', message: '' });
+    } catch (err) {
+      console.error(err);
+      toast.error("Erreur lors de l'envoi du ticket.");
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-16 flex flex-col lg:flex-row gap-10">
-      {/* Partie gauche : infos contact */}
+      {/* Informations de contact */}
       <div className="lg:w-1/2 space-y-6">
         <h2 className="text-4xl font-bold text-blue-700">Contactez-nous</h2>
         <p className="text-gray-600 text-lg">
-          Des questions ? Nous sommes là pour vous aider ! Contactez-nous par courriel, par téléphone ou venez nous voir à nos bureaux.
+          Des questions ? Contactez notre support client.
         </p>
 
         <div className="space-y-4">
@@ -26,44 +60,63 @@ const Contact = () => {
         </div>
 
         <div className="flex gap-4 mt-6">
-          <a href="https://www.facebook.com" target="_blank" rel="noreferrer">
-            <FaFacebook className="text-blue-700 text-2xl hover:text-blue-900" />
-          </a>
-          <a href="https://www.linkedin.com" target="_blank" rel="noreferrer">
-            <FaLinkedin className="text-blue-700 text-2xl hover:text-blue-900" />
-          </a>
-          <a href="https://www.twitter.com" target="_blank" rel="noreferrer">
-            <FaTwitter className="text-blue-700 text-2xl hover:text-blue-900" />
-          </a>
+          <a href="#"><FaFacebook className="text-blue-700 text-2xl hover:text-blue-900" /></a>
+          <a href="#"><FaLinkedin className="text-blue-700 text-2xl hover:text-blue-900" /></a>
+          <a href="#"><FaTwitter className="text-blue-700 text-2xl hover:text-blue-900" /></a>
         </div>
       </div>
 
-      {/* Partie droite : formulaire */}
-      <form className="lg:w-1/2 bg-white p-8 rounded-lg shadow space-y-4">
-        <div>
-          <label className="block text-sm font-medium">Nom</label>
-          <input type="text" className="w-full px-3 py-2 border rounded-md bg-gray-100" required />
+      {/* Formulaire de contact -> Ticket */}
+      <form onSubmit={handleSubmit} className="lg:w-1/2 bg-white p-8 rounded-lg shadow space-y-4">
+       <div>
+          
+          <label className="block text-sm font-medium">Nom </label>
+          <input
+            name="nom"
+            type="text"
+            required
+           
+            className="w-full px-3 py-2 border rounded-md bg-gray-100"
+          />
         </div>
         <div>
-          <label className="block text-sm font-medium">Email</label>
-          <input type="email" className="w-full px-3 py-2 border rounded-md bg-gray-100" required />
+          
+          <label className="block text-sm font-medium">Code Postal </label>
+          <input
+            name="codePostal"
+            type="text"
+            required
+           
+            className="w-full px-3 py-2 border rounded-md bg-gray-100"
+          />
         </div>
+        
         <div>
-          <label className="block text-sm font-medium">Code Postal</label>
-          <input type="text" className="w-full px-3 py-2 border rounded-md bg-gray-100" />
+          
+          <label className="block text-sm font-medium">Nom du sujet</label>
+          <input
+            name="nom"
+            type="text"
+            required
+            value={form.nom}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border rounded-md bg-gray-100"
+          />
         </div>
+
         <div>
           <label className="block text-sm font-medium">Message</label>
-          <textarea className="w-full px-3 py-2 border rounded-md bg-gray-100" rows="4" required></textarea>
+          <textarea
+            name="message"
+            rows="5"
+            required
+            value={form.message}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border rounded-md bg-gray-100"
+          ></textarea>
         </div>
-        <div>
-          <label className="block text-sm font-medium">Joindre un fichier (PDF ou image)</label>
-          <input type="file" accept="image/*,.pdf" className="mt-1" />
-        </div>
-        <button
-          type="submit"
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md"
-        >
+
+        <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md">
           Envoyer le message
         </button>
       </form>

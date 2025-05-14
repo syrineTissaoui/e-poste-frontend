@@ -7,11 +7,15 @@ import Lottie from 'lottie-react';
 import menuAnimation from '../../../assets/lottie/menu.json';
 import toast from 'react-hot-toast';
 import { getDashboardHomeByRole } from '../../../routes/rolesRedirect'; // adapte le chemin selon ton arborescence
-
+import { BsBellFill, BsBellSlashFill } from "react-icons/bs";
+import axios from 'axios';
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  const [enabled, setEnabled] = useState(true);
+const [emailNotification, setEmailNotification] = useState(false);
+  const userId = localStorage.getItem('userId');
 
   useEffect(() => {
     const storedUser = {
@@ -24,8 +28,34 @@ const Navbar = () => {
     } else {
       setUser(null);
     }
+  
+
+    const fetchPreferences = async () => {
+      try {
+        const res = await axios.get(`http://localhost:5000/api/utilisateurs/${userId}`);
+        setEnabled(res.data.notificationPreferences.email); // ou email si tu préfères
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchPreferences();
   }, []);
 
+ const toggleNotification = async () => {
+    try {
+      const updatedValue = !enabled;
+      setEnabled(updatedValue);
+
+      await axios.put(`http://localhost:5000/api/utilisateurs/${userId}/preferences`, {
+        email: updatedValue,
+      });
+
+      toast.success(updatedValue ? "Notifications activées" : "Notifications désactivées");
+    } catch (err) {
+      console.error(err);
+      toast.error("Erreur de mise à jour des notifications");
+    }
+  };
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
@@ -37,6 +67,13 @@ const Navbar = () => {
     navigate('/login');
     setUser(null);
   };
+const handlePreferencesChange = async () => {
+  await axios.put(`http://localhost:5000/api/users/${userId}/preferences`, {
+    email: emailNotification,
+    push: pushNotification,
+  });
+  toast.success("Préférences mises à jour");
+};
 
   return (
     <div className="fixed w-full bg-blue-700 z-10 shadow-sm">
@@ -85,7 +122,32 @@ const Navbar = () => {
                           <h2 className='pl-4 pt-5'>Hello ! <span className='text-blue-50'>{user.displayName}</span></h2>
                           <div className="divider"></div>
                         </div>
-                        <Link  to={getDashboardHomeByRole(user.role)} className="px-4 py-2 hover:bg-neutral-200 transition font-semibold">Dashboard</Link>
+                      {user?.role === "client" ? (
+  <Link
+    to={getDashboardHomeByRole(user.role)}
+    className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-200 transition font-semibold"
+  >
+    <div
+      className="cursor-pointer text-xl text-yellow-200 hover:text-yellow-400 transition"
+      onClick={(e) => {
+        e.preventDefault(); // évite la redirection si on clique sur la cloche
+        toggleNotification();
+      }}
+      title={enabled ? "Notifications activées" : "Notifications désactivées"}
+    >
+      {enabled ? <BsBellFill /> : <BsBellSlashFill />}
+    </div>
+    Dashboard
+  </Link>
+) : (
+  <Link
+    to={getDashboardHomeByRole(user.role)}
+    className="px-4 py-2 hover:bg-neutral-200 transition font-semibold"
+  >
+    Dashboard
+  </Link>
+)}
+
                         <div
                           onClick={handleLogout}
                           className="px-4 py-3 hover:bg-neutral-200 transition font-semibold cursor-pointer"
