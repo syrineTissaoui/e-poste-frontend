@@ -10,38 +10,49 @@ const Banner = () => {
   const [statut, setStatut] = useState(null); 
   const [isModalOpen, setIsModalOpen] = useState(false); 
   const [loading, setLoading] = useState(false); 
+const [errorMessage, setErrorMessage] = useState('');
 
   // Fonction pour faire l'appel API réel
   const handleSuivreClick = async () => {
-    if (!numeroSuivi) {
-      return alert("Veuillez saisir un numéro de suivi.");
+  if (!numeroSuivi.trim()) {
+    setErrorMessage("Veuillez saisir un numéro de suivi.");
+    setIsModalOpen(true);
+    return;
+  }
+
+  setLoading(true);
+  try {
+    const response = await axios.get(`http://localhost:5000/api/colis/${numeroSuivi}`);
+
+    if (!response.data || !response.data.statut) {
+      setErrorMessage("Numéro de suivi invalide ou non trouvé.");
+      setIsModalOpen(true);
+      return;
     }
 
-    setLoading(true); 
-    try {
-      // Remplace l'URL ci-dessous par l'URL de ton API réelle
-      const response = await axios.get(`http://localhost:5000/api/colis/${numeroSuivi}`);
-
-      if (response.data) {
-        const { statut } = response.data; 
-        setStatut(statut);
-        setIsModalOpen(true); 
-      } else {
-        alert("Numéro de suivi invalide ou non trouvé.");
-      }
-    } catch (error) {
-      console.error("Erreur lors du suivi", error);
-      alert("Erreur lors de la récupération du statut. Veuillez réessayer plus tard.");
-    } finally {
-      setLoading(false); 
+    setStatut(response.data.statut);
+    setErrorMessage('');
+    setIsModalOpen(true);
+  } catch (error) {
+    if (error.response?.status === 404) {
+      setErrorMessage("Numéro de suivi incorrect.");
+    } else {
+      setErrorMessage("Erreur lors de la récupération. Veuillez réessayer plus tard.");
     }
-  };
+    setIsModalOpen(true);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   // Fonction pour fermer la modale
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setStatut(null);
-  };
+ const closeModal = () => {
+  setIsModalOpen(false);
+  setStatut(null);
+  setErrorMessage('');
+};
+
 
   return (
     <div
@@ -77,27 +88,36 @@ const Banner = () => {
       </div>
 
       {/* Modale de suivi */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg w-80">
-            <h2 className="text-xl font-bold mb-4">Statut de l'envoi</h2>
-            <div className="flex items-center mb-4">
-              {statut === "En attente" && <FaClock className="text-yellow-500 mr-3" />}
-        {statut === "Annulé" && <FaClock className="text-red-500 mr-3" />}
-
-              {statut === "En transit" && <FaShippingFast className="text-blue-500 mr-3" />}
-              {statut === "Livré" && <FaCheckCircle className="text-green-500 mr-3" />}
-              <p className="text-lg">{statut}</p>
-            </div>
-            <button
-              className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md"
-              onClick={closeModal}
-            >
-              Fermer
-            </button>
+     {isModalOpen && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div className="bg-white p-6 rounded-lg w-80">
+      {errorMessage ? (
+        <>
+          <h2 className="text-xl font-bold mb-4 text-red-600">Erreur</h2>
+          <p className="mb-4">{errorMessage}</p>
+        </>
+      ) : (
+        <>
+          <h2 className="text-xl font-bold mb-4">Statut de l'envoi</h2>
+          <div className="flex items-center mb-4">
+            {statut === "En attente" && <FaClock className="text-yellow-500 mr-3" />}
+            {statut === "Annulé" && <FaClock className="text-red-500 mr-3" />}
+            {statut === "En transit" && <FaShippingFast className="text-blue-500 mr-3" />}
+            {statut === "Livré" && <FaCheckCircle className="text-green-500 mr-3" />}
+            <p className="text-lg">{statut}</p>
           </div>
-        </div>
+        </>
       )}
+      <button
+        className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md mt-2"
+        onClick={closeModal}
+      >
+        Fermer
+      </button>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };

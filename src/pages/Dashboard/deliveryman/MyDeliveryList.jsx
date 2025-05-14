@@ -81,12 +81,12 @@ const MyDeliveryList = () => {
   const renderRows = (items, type) => {
     if (filtreType && type !== filtreType) return null;
 
-    const filtered = items.filter((item) => {
-      if (filtreDate && item.dateLivraison) {
-        return item.dateLivraison.startsWith(filtreDate);
-      }
-      return true;
-    });
+   const filtered = items.filter((item) => {
+  if (filtreDate) {
+    return item.dateLivraison && item.dateLivraison.startsWith(filtreDate);
+  }
+  return true;
+});
 
     return filtered.map((item) => (
       <tr key={item._id} className="text-center">

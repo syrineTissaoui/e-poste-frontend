@@ -88,7 +88,7 @@ console.log('colis',colis)
         </div>
         <div className="text-right">
           <span className="text-sm font-semibold text-gray-800 mr-2">{item.statut}</span>
-          <span className="text-lg font-bold text-gray-400">&gt;</span>
+          
         </div>
       </div>
     ))

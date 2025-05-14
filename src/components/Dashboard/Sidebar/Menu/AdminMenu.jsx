@@ -1,27 +1,25 @@
-import { CiBoxList } from "react-icons/ci";
-import { FaUsersGear } from "react-icons/fa6";
-import { MdDirectionsBike } from "react-icons/md";
+import { MdOutlineDashboard } from "react-icons/md";          // Acceuil
+import { FaBoxOpen, FaMailBulk } from "react-icons/fa";       // Colis / Courriers
+import { FaUsersCog } from "react-icons/fa";                  // Utilisateurs
+import { MdPayments } from "react-icons/md";                  // Paiements
+import { RiMotorbikeLine } from "react-icons/ri";             // Livreurs
+import { CgProfile } from "react-icons/cg";                   // Profil
+import { IoHomeOutline } from "react-icons/io5";              // Accueil public
 import MenuItem from './MenuItem'
-import { BsGraphUp } from 'react-icons/bs'
-import { IoHomeOutline } from "react-icons/io5";
-import { CgProfile } from "react-icons/cg";
-
 
 const AdminMenu = () => {
   return (
     <>
-      <MenuItem icon={BsGraphUp} label='Acceuil' address='/dashboard'/>
-      <MenuItem icon={CiBoxList} label='Gestion des Colis' address='/dashboard/allParcels'/>
-      <MenuItem icon={CiBoxList} label='Gestion des Courriers' address='/dashboard/Gestion-Courrier'/>
-      <MenuItem icon={FaUsersGear} label='Gestion des Utilisateurs' address='/dashboard/manage-users'/>
-      <MenuItem icon={FaUsersGear} label='Gestion des Paiements' address='/dashboard/Gestion-paiement'/>
-
-      <MenuItem icon={MdDirectionsBike} label='Gestion des Livreurs' address='/dashboard/all-deliveryMan'/>
-      <MenuItem icon={CgProfile} label=" Mon Profile" address="/dashboard/profile"/>
-      <MenuItem icon={IoHomeOutline} label="Retour a la page d'acceuil" address="/"/>
-
+      <MenuItem icon={MdOutlineDashboard} label="Acceuil" address="/dashboard" />
+      <MenuItem icon={FaBoxOpen} label="Gestion des Colis" address="/dashboard/allParcels" />
+      <MenuItem icon={FaMailBulk} label="Gestion des Courriers" address="/dashboard/Gestion-Courrier" />
+      <MenuItem icon={FaUsersCog} label="Gestion des Utilisateurs" address="/dashboard/manage-users" />
+      <MenuItem icon={MdPayments} label="Gestion des Paiements" address="/dashboard/Gestion-paiement" />
+      <MenuItem icon={RiMotorbikeLine} label="Gestion des Livreurs" address="/dashboard/all-deliveryMan" />
+      <MenuItem icon={CgProfile} label="Mon Profile" address="/dashboard/profile" />
+      <MenuItem icon={IoHomeOutline} label="Retour à la page d'accueil" address="/" />
     </>
-  )
-}
+  );
+};
 
-export default AdminMenu
+export default AdminMenu;

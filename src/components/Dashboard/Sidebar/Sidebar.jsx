@@ -36,7 +36,6 @@ const Sidebar = () => {
             Authorization: `Bearer ${token}`
           }
         });
-        console.log("---------",res.data.role);
         
         setUser(res.data);
         setRole(res.data.role);
@@ -59,7 +58,7 @@ const Sidebar = () => {
       <div className={`rounded-xl z-10 md:fixed flex flex-col justify-between overflow-x-hidden bg-blue-700 w-64 space-y-6 px-2 py-4 absolute inset-y-0 left-0 transform ${isActive ? 'translate-x-0' : '-translate-x-full '} md:translate-x-0 transition-transform duration-200 ease-in-out`}>
        
           <div className="hidden md:flex flex-col items-center shadow-lg p-4">
-            <img className=" rounded-full" src={logo} width="180"alt="User" />
+            <img className=" rounded-full" src={logo} width="250"alt="User" />
             
        
 

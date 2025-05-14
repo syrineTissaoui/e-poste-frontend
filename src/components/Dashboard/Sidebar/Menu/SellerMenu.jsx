@@ -1,25 +1,18 @@
-
-import { TbTruckDelivery } from "react-icons/tb";
-import { MdOutlineRateReview } from "react-icons/md";
-import MenuItem from './MenuItem'
-import { IoHomeOutline } from "react-icons/io5";
-import { CgProfile } from "react-icons/cg";
+import { MdOutlineDashboard } from "react-icons/md";            // Accueil livreur
+import { FaTruckLoading } from "react-icons/fa";                // Gestion des livraisons
+import { IoHomeOutline } from "react-icons/io5";                // Retour à l'accueil site
+import { CgProfile } from "react-icons/cg";                     // Mon profil
+import MenuItem from './MenuItem';
 
 const SellerMenu = () => {
   return (
     <>
-      <MenuItem icon={IoHomeOutline} label="Acceuil" address="acceuil-livreur" />
-      <MenuItem icon={CgProfile} label=" Mon Profile" address="/dashboard/profile" />
-      <MenuItem icon={TbTruckDelivery} label='Gestion des Livraisons' address='myDelivery' />
-      <MenuItem
-        icon={MdOutlineRateReview}
-        label='Retour a la page d`acceuil'
-        address='/'
-      />
-    
-      
+      <MenuItem icon={MdOutlineDashboard} label="Accueil" address="/dashboard/acceuil-livreur" />
+      <MenuItem icon={CgProfile} label="Mon Profil" address="/dashboard/profile" />
+      <MenuItem icon={FaTruckLoading} label="Gestion des Livraisons" address="/dashboard/myDelivery" />
+      <MenuItem icon={IoHomeOutline} label="Retour à la page d'accueil" address="/" />
     </>
-  )
-}
+  );
+};
 
-export default SellerMenu
+export default SellerMenu;

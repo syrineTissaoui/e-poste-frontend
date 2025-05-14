@@ -38,7 +38,8 @@ import EnvoyerColis from '../pages/Dashboard/Customer/envoyer-colis'
 import GestionPaiements from '../pages/Dashboard/Admin/gestion-paiement'
 import Contact from '../pages/contact'
 import GestionCourrier from '../pages/Dashboard/Admin/gestion-courrier'
-
+import ForgotPassword from '../pages/forgetPassword'
+import ResetPassword from '../pages/resetPassword'
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -60,7 +61,11 @@ export const router = createBrowserRouter([
       {
         path: '/Contact',
         element: <Contact />,
-      },
+      },{
+         path:"/reset-password/:token" ,
+         element:<ResetPassword />} 
+      
+
       
 
 
@@ -68,6 +73,7 @@ export const router = createBrowserRouter([
   },
   { path: '/login', element: <Login /> },
   { path: '/signup', element: <SignUp /> },
+   { path:'/forgot-password', element:<ForgotPassword /> },
   {
     path: '/dashboard',
     element: (
@@ -221,6 +227,8 @@ export const router = createBrowserRouter([
         path: 'profile',
         element: <PrivateRoute><Profile></Profile></PrivateRoute>
       }
+     
+
 
     ],
   },

@@ -1,17 +1,17 @@
-import { VscGitPullRequestGoToChanges } from "react-icons/vsc";
-import { BsFillBoxSeamFill } from "react-icons/bs";
-import { RiListOrdered } from "react-icons/ri";
+import { MdOutlineDashboard } from "react-icons/md";           // Accueil client
+import { FaBoxOpen, FaEnvelopeOpenText, FaHistory } from "react-icons/fa"; // Colis, Courrier, Historique
+import { IoHomeOutline } from "react-icons/io5";               // Retour accueil public
+import { CgProfile } from "react-icons/cg";                    // Profil
 import MenuItem from './MenuItem';
 import { useState, useEffect } from 'react';
 import BecomeSellerModal from '../../../Modal/BecomeSellerModal';
 import useAxiosSecure from '../../../../hooks/useAxiosSecure';
 import toast from 'react-hot-toast';
-import { IoHomeOutline } from "react-icons/io5";
-import { CgProfile } from "react-icons/cg";
+import axios from 'axios';
 
 const CustomerMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [user, setUser] = useState(null); // Get user from backend
+  const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const axiosSecure = useAxiosSecure();
 
@@ -56,16 +56,12 @@ const CustomerMenu = () => {
 
   return (
     <>
-          <MenuItem icon={RiListOrdered} label='Acceuil' address='/dashboard/acceuil-client' />
-
-      <MenuItem icon={BsFillBoxSeamFill} label='Evoyer un Colis' address='/dashboard/envoyer-colis' />
-      <MenuItem icon={RiListOrdered} label='Historique' address='/dashboard/historique' />
-      <MenuItem icon={RiListOrdered} label='Envoyer un Courrier' address='/dashboard/envoyer-courrier' />
-      <MenuItem icon={CgProfile} label=" Mon Profile" address="/dashboard/profile"/>
-
-      <MenuItem icon={IoHomeOutline} label="Retour a la page d'acceuil" address="/"/>
-
-     
+      <MenuItem icon={MdOutlineDashboard} label="Acceuil" address="/dashboard/acceuil-client" />
+      <MenuItem icon={FaBoxOpen} label="Envoyer un Colis" address="/dashboard/envoyer-colis" />
+      <MenuItem icon={FaHistory} label="Historique" address="/dashboard/historique" />
+      <MenuItem icon={FaEnvelopeOpenText} label="Envoyer un Courrier" address="/dashboard/envoyer-courrier" />
+      <MenuItem icon={CgProfile} label="Mon Profile" address="/dashboard/profile" />
+      <MenuItem icon={IoHomeOutline} label="Retour à la page d'accueil" address="/" />
 
       <BecomeSellerModal requestHandle={requestHandle} closeModal={closeModal} isOpen={isOpen} />
     </>

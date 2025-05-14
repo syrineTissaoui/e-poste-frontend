@@ -55,7 +55,6 @@ const GestionUtilisateurs = () => {
     const nouveau = {
       nom: form.nom.value,
       email: form.email.value,
-      role: form.role.value,
       status: form.status.value,
     };
 
@@ -190,12 +189,12 @@ const GestionUtilisateurs = () => {
                     {action === "ajouter" && (
   <input name="motDePasse" type="password" placeholder="Mot de passe" className="w-full border p-2 mb-2 rounded" required />
 )}
-
+ {action === "ajouter" && (
                     <select name="role" defaultValue={utilisateurSelectionne?.role} className="w-full border p-2 mb-2 rounded" required>
                       <option value="client">Client</option>
                       <option value="livreur">Livreur</option>
-                      <option value="support client">Support Client</option>
-                    </select>
+                      <option value="support-client">Support Client</option>
+                    </select>)}
                     <select name="status" defaultValue={utilisateurSelectionne?.status} className="w-full border p-2 mb-2 rounded" required>
                       <option value="actif">Actif</option>
                       <option value="inactif">Inactif</option>

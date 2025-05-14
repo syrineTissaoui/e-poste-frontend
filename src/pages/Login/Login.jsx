@@ -79,9 +79,12 @@ const Login = () => {
               required
               className="w-full px-4 py-3 rounded-md bg-white border border-gray-300"
             />
-            <div className="text-right text-sm text-gray-600 hover:underline cursor-pointer">
-              Mot de passe oublié ?
-            </div>
+            <div className="text-right text-sm text-gray-600">
+  <Link to="/forgot-password" className="hover:underline hover:text-blue-600">
+    Mot de passe oublié ?
+  </Link>
+</div>
+
             <div className="flex space-x-4">
               <button
                 type="submit"
@@ -98,19 +101,14 @@ const Login = () => {
             </div>
           </form>
            <p className="px-6 text-sm text-center text-gray-400">
-                    ACréer un compte?{' '}
+                    Créer un compte?{' '}
                     <Link to="/signup" className="hover:underline hover:text-lime-500 text-gray-600">
                     signup
                     </Link>
                     .
                   </p>
 
-          <div className="text-center mt-6 text-sm text-gray-500">ou continuer avec</div>
-          <div className="flex justify-center space-x-4 mt-2">
-            <button className="text-blue-600"><FaFacebookF size={24} /></button>
-            <button><FaApple size={24} /></button>
-            <button><FcGoogle size={24} /></button>
-          </div>
+         
 
         </div>
       </div>
